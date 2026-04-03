@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR-USER/YOUR-REPO.git
+    repoURL: https://github.com/1bodnar/argocd-lab-in-kind.git
     targetRevision: HEAD
     path: apps/pihole
   destination:
