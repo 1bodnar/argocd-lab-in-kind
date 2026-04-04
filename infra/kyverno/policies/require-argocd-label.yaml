@@ -1,0 +1,31 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-argocd-managed-label
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: require-label-on-namespace
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+      exclude:
+        any:
+          - resources:
+              names:
+                - kube-system
+                - kube-public
+                - kube-node-lease
+                - argocd
+                - kyverno
+                - cert-manager
+                - traefik
+      validate:
+        message: "Namespaces must have label managed-by=argocd"
+        pattern:
+          metadata:
+            labels:
+              managed-by: argocd
