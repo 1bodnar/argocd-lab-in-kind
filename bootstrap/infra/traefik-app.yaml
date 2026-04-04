@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://traefik.github.io/charts
+    chart: traefik
+    targetRevision: 34.5.0
+    helm:
+      releaseName: traefik
+      values: |
+        deployment:
+          replicas: 1
+
+        service:
+          type: NodePort
+
+        ports:
+          web:
+            nodePort: 30000
+          websecure:
+            nodePort: 30443
+
+        ingressRoute:
+          dashboard:
+            enabled: true
+
+        additionalArguments:
+          - "--api.dashboard=true"
+          - "--api.insecure=true"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: traefik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
